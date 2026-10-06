@@ -1,7 +1,7 @@
 [project]
 name = "plantassist"
 version = "0.1.0"
-description = "Add your description here"
+description = "Local-LLM RAG troubleshooting assistant for industrial equipment"
 readme = "README.md"
 authors = [
     { name = "Wasay Aamer", email = "<id>+wez1102@users.noreply.github.com" }
