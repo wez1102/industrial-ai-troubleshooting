@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Local-LLM RAG troubleshooting assistant for industrial equipment"
 readme = "README.md"
 authors = [
-    { name = "Wasay Aamer", email = "<id>+wez1102@users.noreply.github.com" }
+    { name = "Wasay Aamer", email = "165823451+wez1102@users.noreply.github.com" }
 ]
 requires-python = ">=3.12"
 dependencies = [
