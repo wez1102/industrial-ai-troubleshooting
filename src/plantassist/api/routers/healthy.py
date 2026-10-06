@@ -14,7 +14,7 @@ class LiveResponse(BaseModel):
 class VersionResponse(BaseModel):
     name: str
     version: str
-    enviroment: str
+    environment: str
 
 @router.get("/health/live")
 def live() -> LiveResponse:
@@ -31,5 +31,5 @@ def get_version(settings: Annotated[Settings, Depends(get_settings)],) -> Versio
     return VersionResponse(
         name=settings.app_name,
         version=version("plantassist"),
-        enviroment=settings.app_env,
+        environment=settings.app_env,
     )
