@@ -1479,7 +1479,7 @@ Pipeline:
 - Unit tests with respx-simulated tool-call responses
 - Tool-calling cases added to the nightly LLM eval
 
-**Deliverable:** AI combines documents with simulated machine data. 
+**Deliverable:** AI combines documents with simulated machine data.
 
 ### Phase 8 — Production deployment
 
