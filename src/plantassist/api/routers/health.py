@@ -8,13 +8,16 @@ from plantassist.config import Settings, get_settings
 
 router = APIRouter(tags=["healthy"])
 
+
 class LiveResponse(BaseModel):
     status: Literal["ok"]
+
 
 class VersionResponse(BaseModel):
     name: str
     version: str
     environment: str
+
 
 @router.get("/health/live")
 def live() -> LiveResponse:
@@ -23,8 +26,11 @@ def live() -> LiveResponse:
     """
     return LiveResponse(status="ok")
 
+
 @router.get("/version")
-def get_version(settings: Annotated[Settings, Depends(get_settings)],) -> VersionResponse:
+def get_version(
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> VersionResponse:
     """
     Report which build of the app is running.
     """
