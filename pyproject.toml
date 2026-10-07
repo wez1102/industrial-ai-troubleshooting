@@ -46,3 +46,36 @@ branch = true
 
 [tool.coverage.report]
 show_missing = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E", "W",   # pycodestyle: basic style errors
+    "F",        # pyflakes: unused imports/variables, undefined names
+    "I",        # isort: import ordering
+    "B",        # bugbear: likely bugs and design problems
+    "UP",       # pyupgrade: use modern Python syntax
+    "SIM",      # simplify: unnecessarily complicated code
+    "N",        # pep8-naming
+    "C4",       # comprehensions
+    "S",        # bandit: security issues
+    "PT",       # pytest style
+    "RUF",      # Ruff's own rules
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]   # assert is how tests work
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src", "tests"]
+plugins = ["pydantic.mypy"]
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
