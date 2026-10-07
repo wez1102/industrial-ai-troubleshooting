@@ -30,3 +30,18 @@ dev = [
     "pytest-cov>=7.1.0",
     "ruff>=0.16.10",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["--strict-markers", "--import-mode=importlib"]
+markers = [
+    "unit: fast tests with no external services",
+    "integration: tests that need Docker (PostgreSQL)",
+]
+
+[tool.coverage.run]
+source = ["plantassist"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true

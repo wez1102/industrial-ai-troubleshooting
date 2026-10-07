@@ -2,7 +2,7 @@ from importlib.metadata import version
 
 from fastapi import FastAPI
 
-from plantassist.api.routers import healthy
+from plantassist.api.routers import health
 from plantassist.config import get_settings
 
 def create_app() -> FastAPI:
@@ -17,6 +17,6 @@ def create_app() -> FastAPI:
         version=version("plantassist"),
     )
 
-    app.include_router(healthy.router)
+    app.include_router(health.router)
 
     return app
