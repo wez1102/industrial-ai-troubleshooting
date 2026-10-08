@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help install run lint format typecheck test-unit ci
+.PHONY: up down db-shell db-reset help install run lint format typecheck test-unit ci
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
@@ -26,3 +26,15 @@ test-unit: ## Unit tests with coverage
 	uv run pytest -m unit --cov=plantassist --cov-report=term-missing --cov-report=xml
 
 ci: lint typecheck test-unit ## Run everything CI runs
+
+up: ## Start local services (Postgres) and wait until healthy
+	docker compose up -d --wait
+
+down: ## Stop local services (keeps data)
+	docker compose down
+
+db-shell: ## Open psql inside the Postgres container
+	docker compose exec postgres psql -U plantassist -d plantassist
+
+db-reset: ## Stop services and DELETE the database volume
+	docker compose down -v
