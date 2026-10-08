@@ -20,7 +20,7 @@ def client(settings: Settings) -> Iterator[TestClient]:
     """
     A test client for a fresh app that uses the test settings.
     """
-    app = create_app()
+    app = create_app(settings)
     app.dependency_overrides[get_settings] = lambda: settings
     with TestClient(app) as test_client:
         yield test_client
