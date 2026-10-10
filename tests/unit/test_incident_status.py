@@ -57,3 +57,7 @@ def test_statuses_match_database_check_constraint() -> None:
 
     for status in IncidentStatus:
         assert f"'{status.value}'" in constraint_sql
+
+
+def test_ensure_transition_allows_valid_move() -> None:
+    ensure_transition(OPEN, IN_PROGRESS)  # must not raise
