@@ -1,6 +1,7 @@
 from functools import lru_cache
 from typing import Literal
 
+from pydantic import PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -18,6 +19,10 @@ class Settings(BaseSettings):
     app_name: str = "PlantAssist AI"
     app_env: Literal["local", "ci", "staging", "production"] = "local"
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
+
+    database_url: PostgresDsn = PostgresDsn(
+        "postgresql+psycopg://plantassist:plantassist@localhost:5432/plantassist"
+    )
 
 
 @lru_cache
