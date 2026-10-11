@@ -54,6 +54,9 @@ def test_create_rejects_invalid_body(api: TestClient) -> None:
     response = api.post(BASE, json={"machineId": "CP-01", "title": "   ", "symptoms": "x"})
 
     assert response.status_code == 422
+    body = response.json()
+    assert body["code"] == "VALIDATION_ERROR"
+    assert any(detail["field"] == "body.title" for detail in body["details"])
 
 
 def test_get_returns_created_incident(api: TestClient) -> None:
@@ -66,11 +69,17 @@ def test_get_returns_created_incident(api: TestClient) -> None:
 
 
 def test_get_unknown_incident_returns_404(api: TestClient) -> None:
-    assert api.get(f"{BASE}/{uuid.uuid4()}").status_code == 404
+    response = api.get(f"{BASE}/{uuid.uuid4()}")
+
+    assert response.status_code == 404
+    assert response.json()["code"] == "INCIDENT_NOT_FOUND"
 
 
 def test_get_malformed_id_returns_422(api: TestClient) -> None:
-    assert api.get(f"{BASE}/not-a-uuid").status_code == 422
+    response = api.get(f"{BASE}/not-a-uuid")
+
+    assert response.status_code == 422
+    assert response.json()["code"] == "VALIDATION_ERROR"
 
 
 def test_list_filters_and_pages(api: TestClient) -> None:
@@ -89,7 +98,10 @@ def test_list_filters_and_pages(api: TestClient) -> None:
 
 @pytest.mark.parametrize("params", [{"page": 0}, {"size": 0}, {"size": 101}, {"status": "BROKEN"}])
 def test_list_rejects_invalid_query(api: TestClient, params: dict[str, Any]) -> None:
-    assert api.get(BASE, params=params).status_code == 422
+    response = api.get(BASE, params=params)
+
+    assert response.status_code == 422
+    assert response.json()["code"] == "VALIDATION_ERROR"
 
 
 def test_record_resolution_resolves_incident(api: TestClient) -> None:
@@ -110,10 +122,14 @@ def test_resolving_twice_returns_409(api: TestClient) -> None:
     url = f"{BASE}/{created['id']}/resolution"
     api.patch(url, json={"resolution": "First fix"})
 
-    assert api.patch(url, json={"resolution": "Second fix"}).status_code == 409
+    response = api.patch(url, json={"resolution": "Second fix"})
+
+    assert response.status_code == 409
+    assert response.json()["code"] == "INVALID_STATUS_TRANSITION"
 
 
 def test_resolving_unknown_incident_returns_404(api: TestClient) -> None:
     response = api.patch(f"{BASE}/{uuid.uuid4()}/resolution", json={"resolution": "x"})
 
     assert response.status_code == 404
+    assert response.json()["code"] == "INCIDENT_NOT_FOUND"
