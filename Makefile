@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: up down db-shell db-reset help install run lint format typecheck test-unit ci migrate migration
+.PHONY: up down db-shell db-reset help install run lint format typecheck test-unit ci migrate migration test-integration
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
@@ -45,3 +45,6 @@ migrate: ## Apply all database migrations
 
 migration: ## Create a migration: make migration m="describe the change"
 	uv run alembic revision --autogenerate -m "$(m)"
+
+test-integration: ## Integration tests against a throwaway Postgres (needs Docker)
+	uv run pytest -m integration -v
