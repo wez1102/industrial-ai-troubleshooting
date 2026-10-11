@@ -1,4 +1,6 @@
+from dataclasses import dataclass
 from enum import StrEnum
+from uuid import UUID
 
 
 class IncidentStatus(StrEnum):
@@ -10,6 +12,27 @@ class IncidentStatus(StrEnum):
     IN_PROGRESS = "IN_PROGRESS"
     RESOLVED = "RESOLVED"
     CLOSED = "CLOSED"
+
+
+@dataclass(frozen=True, slots=True)
+class IncidentFilters:
+    """
+    Optional criteria for listing incidents. None means 'don't filter on this'.
+    """
+
+    status: IncidentStatus | None = None
+    machine_id: str | None = None
+    alarm_code: str | None = None
+
+
+class IncidentNotFoundError(Exception):
+    """
+    Raised when no incident has the requested ID.
+    """
+
+    def __init__(self, incident_id: UUID) -> None:
+        super().__init__(f"Incident {incident_id} not found")
+        self.incident_id = incident_id
 
 
 ALLOWED_TRANSITIONS: dict[IncidentStatus, frozenset[IncidentStatus]] = {

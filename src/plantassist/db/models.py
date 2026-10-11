@@ -8,7 +8,9 @@ from plantassist.db.base import Base
 
 
 class Incident(Base):
-    """A reported machine problem and, eventually, its resolution."""
+    """
+    A reported machine problem and, eventually, its resolution.
+    """
 
     __tablename__ = "incidents"
     __table_args__ = (
@@ -17,6 +19,7 @@ class Incident(Base):
             name="status_valid",
         ),
     )
+    __mapper_args__ = {"eager_defaults": True}  # noqa: RUF012  (read once by SQLAlchemy at class creation)
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     machine_id: Mapped[str] = mapped_column(String(64), index=True)
