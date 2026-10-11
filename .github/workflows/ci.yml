@@ -19,11 +19,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v10.0.1
-        with:
-          version: "latest-known"
-          enable-cache: true
-      - run: uv sync --locked
+      - uses: ./.github/actions/setup-python-env
       - run: make lint
 
   typecheck:
@@ -32,25 +28,82 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v10.0.1
-        with:
-          version: "latest-known"
-          enable-cache: true
-      - run: uv sync --locked
+      - uses: ./.github/actions/setup-python-env
       - run: make typecheck
 
   test:
-    name: Unit tests
+    name: Unit tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-python-env
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: make test-unit
+      - name: Collect coverage data
+        run: |
+          mkdir -p coverage-data
+          mv .coverage "coverage-data/.coverage.unit-py${{ matrix.python-version }}"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: coverage-data-unit-py${{ matrix.python-version }}
+          path: coverage-data
+          include-hidden-files: true
+
+  integration:
+    name: Integration tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v10.0.1
+      - uses: ./.github/actions/setup-python-env
+      - run: make test-integration
+      - name: Collect coverage data
+        run: |
+          mkdir -p coverage-data
+          mv .coverage coverage-data/.coverage.integration
+      - uses: actions/upload-artifact@v7
         with:
-          version: "latest-known"
-          enable-cache: true
-      - run: uv sync --locked
-      - run: make test-unit
+          name: coverage-data-integration
+          path: coverage-data
+          include-hidden-files: true
+
+  migrations:
+    name: Migrations
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_USER: plantassist
+          POSTGRES_PASSWORD: plantassist
+          POSTGRES_DB: plantassist
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U plantassist -d plantassist"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://plantassist:plantassist@localhost:5432/plantassist
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-python-env
+      - name: Upgrade to head
+        run: uv run alembic upgrade head
+      - name: Downgrade to base
+        run: uv run alembic downgrade base
+      - name: Upgrade to head again
+        run: uv run alembic upgrade head
+      - name: Check models match migrations
+        run: uv run alembic check
 
   hooks:
     name: Pre-commit hooks
@@ -58,17 +111,39 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v10.0.1
-        with:
-          version: "latest-known"
-          enable-cache: true
-      - run: uv sync --locked
+      - uses: ./.github/actions/setup-python-env
       - run: uv run pre-commit run --all-files --show-diff-on-failure
+
+  coverage:
+    name: Coverage report
+    needs: [test, integration]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-python-env
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: coverage-data-*
+          path: coverage-data
+          merge-multiple: true
+      - name: Combine coverage data
+        run: uv run coverage combine coverage-data
+      - name: Write coverage summary
+        run: uv run coverage report --format=markdown --fail-under=0 >> "$GITHUB_STEP_SUMMARY"
+      - name: Write coverage XML
+        run: uv run coverage xml -o coverage.xml --fail-under=0
+      - uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report
+          path: coverage.xml
+      - name: Enforce combined coverage
+        run: uv run coverage report
 
   ci-success:
     name: CI success
     if: always()
-    needs: [lint, typecheck, test, hooks]
+    needs: [lint, typecheck, test, integration, migrations, hooks, coverage]
     runs-on: ubuntu-latest
     steps:
       - name: Fail if any required job did not succeed

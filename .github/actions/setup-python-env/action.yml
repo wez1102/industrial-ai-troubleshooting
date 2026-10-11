@@ -1,0 +1,22 @@
+name: Set up Python environment
+description: Install uv, the right Python and the locked project dependencies.
+
+inputs:
+  python-version:
+    description: Python version to use. Empty means the one in .python-version.
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Install uv
+      uses: astral-sh/setup-uv@v10.0.1
+      with:
+        version: "latest-known"
+        enable-cache: true
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install dependencies
+      shell: bash
+      run: uv sync --locked

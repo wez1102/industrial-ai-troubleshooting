@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 from plantassist.config import Settings, get_settings
 
-router = APIRouter(tags=["healthy"])
+router = APIRouter(tags=["health"])
 
 
 class LiveResponse(BaseModel):
