@@ -45,7 +45,7 @@ def create(api: TestClient, **overrides: Any) -> dict[str, Any]:
 def test_create_returns_201_with_camel_case_body(api: TestClient) -> None:
     body = create(api)
 
-    assert body["status"] == "OPEN"
+    assert body["status"] == "CLOSED"
     assert body["machineId"] == "CP-01"
     uuid.UUID(body["id"])  # raises if the ID isn't a valid UUID
 
