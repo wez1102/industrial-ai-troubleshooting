@@ -1,23 +1,25 @@
-from typing import Annotated
+from typing import Annotated, Any
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, Query, status
 
 from plantassist.api.deps import IncidentServiceDep
+from plantassist.api.errors import ErrorResponse
 from plantassist.api.schemas.incidents import (
     IncidentCreate,
     IncidentPage,
     IncidentRead,
     IncidentResolution,
 )
-from plantassist.domain.incidents import (
-    IncidentFilters,
-    IncidentNotFoundError,
-    IncidentStatus,
-    InvalidStatusTransitionError,
-)
+from plantassist.domain.incidents import IncidentFilters, IncidentStatus
 
-router = APIRouter(prefix="/api/v1/incidents", tags=["incidents"])
+ERROR_RESPONSES: dict[int | str, dict[str, Any]] = {
+    404: {"model": ErrorResponse, "description": "Incident not found"},
+    409: {"model": ErrorResponse, "description": "Status change not allowed"},
+    422: {"model": ErrorResponse, "description": "Invalid request"},
+}
+
+router = APIRouter(prefix="/api/v1/incidents", tags=["incidents"], responses=ERROR_RESPONSES)
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
@@ -39,11 +41,7 @@ async def get_incident(incident_id: UUID, service: IncidentServiceDep) -> Incide
     """
     Fetch one incident by ID.
     """
-    try:
-        incident = await service.get(incident_id)
-    except IncidentNotFoundError as exc:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
-    return IncidentRead.model_validate(incident)
+    return IncidentRead.model_validate(await service.get(incident_id))
 
 
 @router.get("")
@@ -75,10 +73,5 @@ async def record_resolution(
     """
     Record what fixed the problem. Moves the incident to RESOLVED.
     """
-    try:
-        incident = await service.record_resolution(incident_id, body.resolution)
-    except IncidentNotFoundError as exc:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
-    except InvalidStatusTransitionError as exc:
-        raise HTTPException(status.HTTP_409_CONFLICT, detail=str(exc)) from exc
+    incident = await service.record_resolution(incident_id, body.resolution)
     return IncidentRead.model_validate(incident)
