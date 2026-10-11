@@ -47,4 +47,4 @@ migration: ## Create a migration: make migration m="describe the change"
 	uv run alembic revision --autogenerate -m "$(m)"
 
 test-integration: ## Integration tests against a throwaway Postgres (needs Docker)
-	uv run pytest -m integration -v
+	uv run pytest -m integration -v --cov=plantassist --cov-report=term-missing --cov-fail-under=0
