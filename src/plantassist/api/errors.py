@@ -7,7 +7,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from plantassist.api.schemas.incidents import ApiModel
+from plantassist.api.schemas.base import ApiModel
 from plantassist.domain.incidents import IncidentNotFoundError, InvalidStatusTransitionError
 from plantassist.observability.request_id import get_request_id
 

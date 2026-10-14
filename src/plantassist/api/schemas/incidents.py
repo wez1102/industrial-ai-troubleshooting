@@ -1,23 +1,10 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
-from pydantic.alias_generators import to_camel
+from pydantic import Field
 
+from plantassist.api.schemas.base import ApiModel
 from plantassist.domain.incidents import IncidentStatus
-
-
-class ApiModel(BaseModel):
-    """
-    Base for API schemas: camelCase JSON, snake_case Python, trimmed strings.
-    """
-
-    model_config = ConfigDict(
-        alias_generator=to_camel,
-        populate_by_name=True,
-        from_attributes=True,
-        str_strip_whitespace=True,
-    )
 
 
 class IncidentCreate(ApiModel):

@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: up down db-shell db-reset help install run lint format typecheck test-unit ci migrate migration test-integration
+.PHONY: up down db-shell db-reset help install run lint format typecheck test-unit ci migrate migration test-integration image stack-up stack-down stack-logs
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
@@ -31,7 +31,7 @@ up: ## Start local services (Postgres) and wait until healthy
 	docker compose up -d --wait
 
 down: ## Stop local services (keeps data)
-	docker compose down
+	docker compose --profile app down
 
 db-shell: ## Open psql inside the Postgres container
 	docker compose exec postgres psql -U plantassist -d plantassist
@@ -48,3 +48,18 @@ migration: ## Create a migration: make migration m="describe the change"
 
 test-integration: ## Integration tests against a throwaway Postgres (needs Docker)
 	uv run pytest -m integration -v --cov=plantassist --cov-report=term-missing --cov-fail-under=0
+
+image: ## Build the production container image
+	docker build \
+		--build-arg GIT_SHA=$$(git rev-parse HEAD) \
+		--build-arg BUILD_DATE=$$(date -u +%Y-%m-%dT%H:%M:%SZ) \
+		-t plantassist:dev .
+
+stack-up: image ## Build the image, then start db → migrate → app and wait until ready
+	docker compose --profile app up -d --wait
+
+stack-down: ## Stop the full stack (keeps data)
+	docker compose --profile app down
+
+stack-logs: ## Follow the app's logs (Ctrl + C to stop)
+	docker compose --profile app logs -f app

@@ -47,3 +47,10 @@ def test_incident_lifecycle_through_http(db_api: TestClient) -> None:
 
     fetched = db_api.get(f"{BASE}/{incident_id}")
     assert fetched.json()["resolution"] == "Encoder connector was loose."
+
+
+def test_ready_when_database_is_up(db_api: TestClient) -> None:
+    response = db_api.get("/health/ready")
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "ready", "checks": {"database": "ok"}}
