@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: up down db-shell db-reset help install run lint format typecheck test-unit ci migrate migration test-integration
+.PHONY: up down db-shell db-reset help install run lint format typecheck test-unit ci migrate migration test-integration image
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
@@ -48,3 +48,6 @@ migration: ## Create a migration: make migration m="describe the change"
 
 test-integration: ## Integration tests against a throwaway Postgres (needs Docker)
 	uv run pytest -m integration -v --cov=plantassist --cov-report=term-missing --cov-fail-under=0
+
+image: ## Build the production container image
+	docker build -t plantassist:dev .
