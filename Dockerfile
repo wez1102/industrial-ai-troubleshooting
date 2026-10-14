@@ -39,6 +39,12 @@
     COPY --from=builder /app/.venv /app/.venv
     COPY alembic.ini /app/alembic.ini
     COPY migrations /app/migrations
+    ARG GIT_SHA=unknown
+    ARG BUILD_DATE=unknown
+    ENV GIT_SHA=$GIT_SHA \
+        BUILD_DATE=$BUILD_DATE
+    LABEL org.opencontainers.image.revision=$GIT_SHA \
+        org.opencontainers.image.created=$BUILD_DATE
 
     ENV PATH="/app/.venv/bin:$PATH" \
         PYTHONUNBUFFERED=1 \

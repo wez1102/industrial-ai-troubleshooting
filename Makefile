@@ -50,4 +50,7 @@ test-integration: ## Integration tests against a throwaway Postgres (needs Docke
 	uv run pytest -m integration -v --cov=plantassist --cov-report=term-missing --cov-fail-under=0
 
 image: ## Build the production container image
-	docker build -t plantassist:dev .
+	docker build \
+		--build-arg GIT_SHA=$$(git rev-parse HEAD) \
+		--build-arg BUILD_DATE=$$(date -u +%Y-%m-%dT%H:%M:%SZ) \
+		-t plantassist:dev .
