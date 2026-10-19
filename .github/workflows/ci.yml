@@ -114,6 +114,60 @@ jobs:
       - uses: ./.github/actions/setup-python-env
       - run: uv run pre-commit run --all-files --show-diff-on-failure
 
+  image:
+    name: Build and scan image
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: docker/setup-buildx-action@v4
+
+      - name: Record build time
+        run: echo "BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+
+      - name: Build image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          load: true
+          push: false
+          tags: plantassist:ci
+          build-args: |
+            GIT_SHA=${{ github.event.pull_request.head.sha || github.sha }}
+            BUILD_DATE=${{ env.BUILD_DATE }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Scan image (report HIGH and CRITICAL)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: plantassist:ci
+          format: sarif
+          output: trivy-results.sarif
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "0"
+
+      - name: Upload scan results to the Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-results.sarif
+          category: trivy-image
+
+      - name: Fail on fixable CRITICAL vulnerabilities
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: plantassist:ci
+          format: table
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+
   coverage:
     name: Coverage report
     needs: [test, integration]
@@ -143,7 +197,7 @@ jobs:
   ci-success:
     name: CI success
     if: always()
-    needs: [lint, typecheck, test, integration, migrations, hooks, coverage]
+    needs: [lint, typecheck, test, integration, migrations, hooks, coverage, image]
     runs-on: ubuntu-latest
     steps:
       - name: Fail if any required job did not succeed
