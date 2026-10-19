@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: up down db-shell db-reset help install run lint format typecheck test-unit ci migrate migration test-integration image stack-up stack-down stack-logs
+.PHONY: up down db-shell db-reset help install run lint format typecheck test-unit ci migrate migration test-integration image stack-up stack-down stack-logs smoke
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
@@ -63,3 +63,6 @@ stack-down: ## Stop the full stack (keeps data)
 
 stack-logs: ## Follow the app's logs (Ctrl + C to stop)
 	docker compose --profile app logs -f app
+
+smoke: ## Smoke-test a running stack (start it first with: make stack-up)
+	uv run python scripts/smoke_test.py

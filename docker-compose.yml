@@ -23,7 +23,7 @@ services:
       retries: 10
 
   migrate:
-    image: plantassist:dev
+    image: ${APP_IMAGE:-plantassist:dev}
     pull_policy: never
     profiles: ["app"]
     command: ["alembic", "upgrade", "head"]
@@ -33,7 +33,7 @@ services:
         condition: service_healthy
 
   app:
-    image: plantassist:dev
+    image: ${APP_IMAGE:-plantassist:dev}
     pull_policy: never
     profiles: ["app"]
     environment: *app-environment
