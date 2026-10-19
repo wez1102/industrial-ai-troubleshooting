@@ -187,6 +187,18 @@ jobs:
           ignore-unfixed: true
           exit-code: "1"
 
+      - name: Save image for publishing
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: docker save plantassist:ci | gzip > plantassist-image.tar.gz
+
+      - name: Upload image artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v7
+        with:
+          name: plantassist-image
+          path: plantassist-image.tar.gz
+          retention-days: 1
+
   coverage:
     name: Coverage report
     needs: [test, integration]
@@ -222,3 +234,43 @@ jobs:
       - name: Fail if any required job did not succeed
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: exit 1
+
+  publish:
+    name: Publish image
+    needs: [ci-success]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: write
+    env:
+      IMAGE_NAME: ghcr.io/${{ github.repository }}
+    steps:
+      - name: Download the tested image
+        uses: actions/download-artifact@v8
+        with:
+          name: plantassist-image
+
+      - name: Load the image
+        run: gunzip -c plantassist-image.tar.gz | docker load
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag and push
+        run: |
+          short_sha="${GITHUB_SHA::7}"
+          for tag in main "sha-${short_sha}"; do
+            docker tag plantassist:ci "${IMAGE_NAME}:${tag}"
+            docker push "${IMAGE_NAME}:${tag}"
+          done
+          {
+            echo "### Published image"
+            echo "- \`${IMAGE_NAME}:main\`"
+            echo "- \`${IMAGE_NAME}:sha-${short_sha}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
