@@ -115,12 +115,15 @@ jobs:
       - run: uv run pre-commit run --all-files --show-diff-on-failure
 
   image:
-    name: Build and scan image
+    name: Build, scan and smoke-test image
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
       contents: read
       security-events: write
+    env:
+      APP_IMAGE: plantassist:ci
+      APP_ENV: ci
     steps:
       - uses: actions/checkout@v6
 
@@ -141,6 +144,22 @@ jobs:
             BUILD_DATE=${{ env.BUILD_DATE }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Start the stack from the built image
+        run: docker compose --profile app up -d --wait --wait-timeout 120
+
+      - name: Smoke test
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: python3 scripts/smoke_test.py
+
+      - name: Show container logs if anything failed
+        if: failure()
+        run: docker compose --profile app logs
+
+      - name: Stop the stack
+        if: always()
+        run: docker compose --profile app down -v
 
       - name: Scan image (report HIGH and CRITICAL)
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
