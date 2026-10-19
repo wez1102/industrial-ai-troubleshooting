@@ -1,5 +1,10 @@
 name: plantassist
 
+# Settings shared by every service that runs the app image.
+x-app-environment: &app-environment
+  APP_ENV: ${APP_ENV:-local}
+  DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-plantassist}:${POSTGRES_PASSWORD:-plantassist}@postgres:5432/${POSTGRES_DB:-plantassist}
+
 services:
   postgres:
     image: pgvector/pgvector:pg17
@@ -16,6 +21,35 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  migrate:
+    image: ${APP_IMAGE:-plantassist:dev}
+    pull_policy: never
+    profiles: ["app"]
+    command: ["alembic", "upgrade", "head"]
+    environment: *app-environment
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  app:
+    image: ${APP_IMAGE:-plantassist:dev}
+    pull_policy: never
+    profiles: ["app"]
+    environment: *app-environment
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
 
 volumes:
   pgdata:

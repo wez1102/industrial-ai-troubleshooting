@@ -24,6 +24,9 @@ class Settings(BaseSettings):
         "postgresql+psycopg://plantassist:plantassist@localhost:5432/plantassist"
     )
 
+    git_sha: str = "unknown"
+    build_date: str = "unknown"
+
 
 @lru_cache
 def get_settings() -> Settings:

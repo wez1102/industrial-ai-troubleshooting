@@ -1,0 +1,29 @@
+# Version control and CI
+.git
+.github
+
+# Local environments and caches
+.venv
+**/__pycache__
+**/*.pyc
+.pytest_cache
+.mypy_cache
+.ruff_cache
+
+# Test and coverage output
+tests
+.coverage*
+coverage.xml
+coverage-data
+htmlcov
+
+# Secrets: never bake these into an image
+.env
+.env.*
+!.env.example
+
+# Local tooling, not needed inside the image
+docker-compose.yml
+Dockerfile
+.dockerignore
+.pre-commit-config.yaml
