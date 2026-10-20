@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: up down db-shell db-reset help install run lint format typecheck test-unit ci migrate migration test-integration image stack-up stack-down stack-logs smoke
+.PHONY: up down db-shell db-reset help install run lint format typecheck test-unit ci migrate migration test-integration image stack-up stack-down stack-logs smoke audit
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
@@ -66,3 +66,8 @@ stack-logs: ## Follow the app's logs (Ctrl + C to stop)
 
 smoke: ## Smoke-test a running stack (start it first with: make stack-up)
 	uv run python scripts/smoke_test.py
+
+audit: ## Check runtime dependencies for known vulnerabilities
+	mkdir -p build
+	uv export --locked --no-dev --no-emit-project --format requirements-txt -o build/audit-requirements.txt
+	uv run pip-audit -r build/audit-requirements.txt --disable-pip
