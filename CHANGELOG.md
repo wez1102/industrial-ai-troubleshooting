@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/wez1102/industrial-ai-troubleshooting/compare/v0.2.0...v0.2.1) (2026-10-20)
+
+
+### Bug Fixes
+
+* **deps:** bump the python-runtime group across 1 directory with 2 updates ([#10](https://github.com/wez1102/industrial-ai-troubleshooting/issues/10)) ([b265a7f](https://github.com/wez1102/industrial-ai-troubleshooting/commit/b265a7f8d8ce2d5eed8cb8aeebae32cbc01a94c0))
+
 ## [0.2.0](https://github.com/wez1102/industrial-ai-troubleshooting/compare/v0.1.0...v0.2.0) (2026-10-20)
 
 
