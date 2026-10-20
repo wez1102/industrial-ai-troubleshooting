@@ -26,6 +26,10 @@
     # ---------- Stage 2: the small runtime image ----------
     FROM python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1 AS runtime
 
+    # pip is never used at runtime (uv built the virtual environment in the builder stage).
+    # Removing it shrinks the attack surface and clears the pip CVEs Trivy reports.
+    RUN python -m pip uninstall --yes pip
+
     LABEL org.opencontainers.image.title="plantassist" \
           org.opencontainers.image.description="Local-LLM RAG troubleshooting assistant for industrial equipment" \
           org.opencontainers.image.source="https://github.com/wez1102/industrial-ai-troubleshooting" \

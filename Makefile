@@ -69,5 +69,5 @@ smoke: ## Smoke-test a running stack (start it first with: make stack-up)
 
 audit: ## Check runtime dependencies for known vulnerabilities
 	mkdir -p build
-	uv export --locked --no-dev --no-emit-project --format requirements-txt -o build/audit-requirements.txt
+	uv export --quiet --locked --no-dev --no-emit-project --format requirements-txt -o build/audit-requirements.txt
 	uv run pip-audit -r build/audit-requirements.txt --disable-pip
