@@ -30,4 +30,4 @@ A technician found that the **Axis 4 encoder connector had been left partly unla
 
 ## Resolution
 
-**SAFETY:** Lock out Axis 4, verify zero energy, and secure the mechanism before handling the encoder connector. Maintenance seated and latched the plug, checked the strain relief, and recorded the connector condition. The controls engineer restored the previous gain revision. A subsequent verification record showed **0.22 mm** peak following error on the same 0.20 s ramp and no recurring alarm during a **30 min** observation. The team closed the record with the loose connector as the confirmed cause.
+**SAFETY:** Axis 4 was locked out, zero energy was verified, and the mechanism was secured before the encoder connector was handled. Maintenance seated and latched the plug, checked the strain relief, and recorded the connector condition. The controls engineer restored the previous gain revision. A subsequent verification record showed **0.22 mm** peak following error on the same 0.20 s ramp and no recurring alarm during a **30 min** observation. The team closed the record with the loose connector as the confirmed cause.

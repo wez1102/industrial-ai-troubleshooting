@@ -22,4 +22,4 @@ Root Cause:
 The cabinet filter was found around 85% covered in corrugated paper dust, and the restricted intake airflow was the documented cause. No evidence supported a motor winding problem or sustained torque overload. Fan condition was later reported normal during the site's approved isolated inspection.
 
 Resolution:
-SAFETY: Lock out the cabinet, verify zero energy and DC-bus discharge, and secure the fan before removing the filter. Maintenance replaced the clogged filter, inspected the fan, and reviewed the filter-service interval with supervision. A later 35 min observation recorded a cabinet inlet of 28 °C and a drive heat sink of 55 °C, with no new SERVO-7024 entry.
+SAFETY: The cabinet was locked out, zero energy and DC-bus discharge were verified, and the fan was secured before the filter was removed. Maintenance replaced the clogged filter, inspected the fan, and reviewed the filter-service interval with supervision. A later 35 min observation recorded a cabinet inlet of 28 °C and a drive heat sink of 55 °C, with no new SERVO-7024 entry.
