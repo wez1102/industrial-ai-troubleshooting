@@ -1,0 +1,25 @@
+---
+document_id: inc-pe-0002
+title: CV-03 PE1 Low Signal Margin From Tape Reflector
+document_type: incident_report
+equipment_type: photoelectric_sensor
+machine_id: CV-03
+alarm_code: PE-3003
+occurred_on: 2026-04-21
+version: "1.0.0"
+license: synthetic
+---
+
+CV-03 PE1 Low Signal Margin From Tape Reflector
+
+Symptoms:
+For nine days CV-03 PE1 logged PE-3003 Low Signal Margin warnings several times a shift, and the crew acknowledged each one. The green stability LED was off most of the time. On 21 April CV-03 stopped twice on CONV-2008 Product Jam with the discharge clear. The HMI sensor page showed a margin of 1.3x with the beam clear, against the 8 to 12x expected for a clean reflector.
+
+Diagnosis:
+The margin trend showed a sudden step from 10x to 1.4x on 12 April, not a slow slide, so dust was not the main cause. Cleaning the lens and reflector raised the margin only to 1.5x. The maintenance log for 12 April showed that the original reflector had been cracked by a sheet and replaced with a square of reflective tape from the stores cupboard, because no spare corner-cube reflector was in stock.
+
+Root Cause:
+CV-03 PE1 is a polarized retroreflective sensor. It needs a corner-cube reflector, which returns light in a form the polarizing filter accepts. The reflective tape returned very little usable light, so the sensor worked with almost no margin and dropped out whenever dust settled.
+
+Resolution:
+SAFETY: CV-03 was locked out and zero energy verified before maintenance reached across the belt to the reflector bracket. An 80 mm corner-cube reflector was fitted in place of the tape and the sensor was realigned. The margin read 11x with the beam clear and the green LED came on steadily. Two corner-cube reflectors were added to the stores minimum stock list.
