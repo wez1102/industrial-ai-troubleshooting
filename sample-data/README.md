@@ -22,6 +22,8 @@ CV-03 is an **IC-600** flat-belt infeed conveyor that carries individual corruga
 
 Process photo-eyes use the fictional **PE-40** designation and are tagged by machine: `CV-03 PE1` (polarized retroreflective, CV-03 discharge), `CP-01 PE2` (diffuse with background suppression, feeder gate), `CP-01 PE3` (through-beam, folding-section exit count), and `PL-01 PE4` (diffuse with background suppression, bundle infeed). They are process sensors, not safety devices.
 
+Pneumatic cylinders use the fictional **PC-63** system designation: `CP-01 CYL1` (feeder gate lift), `CP-01 CYL2` (counter-ejector bundle pusher), `PL-01 CYL3` (bundle stop gate), and `PL-01 CYL4` (layer squaring clamps). Each machine has its own shut-off valve, filter-regulator set to 5.5 bar, and a soft-start dump valve controlled by the safety circuit.
+
 ## Alarm Code Prefixes
 
 These are PlantAssist corpus HMI alarm prefixes, not published BW Papersystems or B&R alarm identifiers.
@@ -51,7 +53,7 @@ These four levels classify the documented event severity within the corpus:
 - Manual front matter uses `document_id`, `title`, `document_type`, `equipment_type`, `manufacturer`, `model`, `version`, and `license`. Incident front matter uses `document_id`, `title`, `document_type`, `equipment_type`, `machine_id`, `alarm_code`, `occurred_on`, `version`, and `license`.
 - Every `document_id` is unique. Versions are quoted semantic-version strings; dates use ISO `YYYY-MM-DD` notation. The license value `synthetic` is a corpus label, not an external legal license.
 - All manual and Markdown-incident headings are unique within each file, unnumbered, in Title Case, and followed by meaningful prose. Preserve headings once evaluation questions use their chunk IDs.
-- Manuals are named `<equipment_type>_manual.md` with a short `document_id` ending in `-manual-v1` (`servo-manual-v1`, `conveyor-manual-v1`, `photoelectric-manual-v1`). Incident filenames follow `inc-<prefix>-NNNN-short-kebab-description.md` or `.txt` inside `incidents/<equipment_type>/`, where the prefix is `servo`, `conv`, `pe`, `pneu`, or `safe`.
+- Manuals are named `<equipment_type>_manual.md` with a short `document_id` ending in `-manual-v1` (`servo-manual-v1`, `conveyor-manual-v1`, `photoelectric-manual-v1`, `pneumatic-manual-v1`). Incident filenames follow `inc-<prefix>-NNNN-short-kebab-description.md` or `.txt` inside `incidents/<equipment_type>/`, where the prefix is `servo`, `conv`, `pe`, `pneu`, or `safe`.
 - Each equipment set includes at least one `.txt` incident with YAML front matter and a **plain-text body without Markdown headings** to exercise the TXT parser.
 - Safety-critical steps in Markdown use the literal `**SAFETY:**` marker; TXT incidents use plain `SAFETY:`. Both represent `safetyCritical: true` after parsing. In manuals the marker introduces an instruction; in incident reports it introduces a past-tense record of the isolation that was applied.
 - Every incident `alarm_code` appears in the alarm table of its equipment's manual.
@@ -82,6 +84,13 @@ Photoelectric sensor manual:
 - Sensor connector pin assignments and wiring diagrams.
 - Safety light curtains and safety-rated sensors (PE-40 sensors are not safety devices).
 - Choosing a sensor or sensing mode for a new application, and fibre-optic sensors.
+
+Pneumatic cylinder manual:
+
+- Compressor house, air dryers, and main header maintenance.
+- Dump valve function testing (referred to the safety circuit manual).
+- Cylinder seal replacement and cylinder rebuild procedures.
+- Sizing cylinders, valves, or supply lines for new applications, and valve manifold network configuration.
 
 Actual BW Papersystems wiring, connector pinouts, product-specific torque values, electrical test points, safety-validation methods, and B&R model/firmware applicability are outside the corpus. These details are not established by the synthetic records.
 
@@ -114,6 +123,15 @@ Photoelectric sensor (`PE-3xxx`):
 - `incidents/photoelectric_sensor/inc-pe-0004-bundle-sensor-low-sun-interference.md`: PL-01 PE4 false detections from low afternoon sun.
 - `incidents/photoelectric_sensor/inc-pe-0005-folder-sensor-cable-chafed-short-circuit.md`: CP-01 PE3 cable chafed through at a guard hinge.
 
+Pneumatic cylinder (`PNEU-4xxx`):
+
+- `manuals/pneumatic_cylinder_manual.md`: PC-63 air preparation, valves, position sensors, alarms, troubleshooting, and maintenance.
+- `incidents/pneumatic_cylinder/inc-pneu-0001-pusher-extend-timeout-sensor-moved.md`: CP-01 CYL2 timeout with the cylinder fully out; the sensor had been knocked along its slot.
+- `incidents/pneumatic_cylinder/inc-pneu-0002-layer-clamps-slow-clogged-silencers.txt`: PL-01 CYL4 slow retract from a dust-clogged exhaust silencer.
+- `incidents/pneumatic_cylinder/inc-pneu-0003-low-pressure-undersized-supply-hose.md`: CP-01 pressure dips from an 8 mm replacement supply hose.
+- `incidents/pneumatic_cylinder/inc-pneu-0004-excess-air-consumption-hidden-leaks.md`: PL-01 idle flow nearly four times baseline from three hidden leaks.
+- `incidents/pneumatic_cylinder/inc-pneu-0005-feeder-gate-retract-timeout-water-in-valve.md`: CP-01 CYL1 valve spool stuck by water from a jammed condensate drain.
+
 ## Suggested Retrieval Checks
 
 - CP-01 Axis 4 dropping out during acceleration → Following Error and incident servo-0001.
@@ -124,6 +142,8 @@ Photoelectric sensor (`PE-3xxx`):
   - Motor overheating: servo hoist brake drag with raised current (servo-0005) vs conveyor motor cooling with normal current (conv-0002).
   - Alarms that blame the wrong thing: `SERVO-7021` raised after feedback loss (servo-0003), and `CONV-2008` Product Jam raised by a misaligned reflector (conv-0004).
   - The same sensor, two causes: CV-03 PE1 false jams from a knocked, dusty reflector (conv-0004) vs a tape reflector with low margin (pe-0002).
-  - Fixes that did not help: lengthening an input filter (pe-0001), cleaning a clean lens (pe-0003), re-teaching a correctly taught sensor (pe-0004), replacing a healthy sensor (pe-0005).
+  - Fixes that did not help: lengthening an input filter (pe-0001), cleaning a clean lens (pe-0003), re-teaching a correctly taught sensor (pe-0004), replacing a healthy sensor (pe-0005), raising the regulator (pneu-0001, pneu-0003), opening flow controls (pneu-0002), replacing a healthy valve coil (pneu-0005).
+  - Sensors knocked out of position: a photo-eye bracket (pe-0001, conv-0004) vs a cylinder position sensor (pneu-0001).
+  - Dust slowing things down: a clogged exhaust silencer (pneu-0002) vs blocked cooling (servo-0002, conv-0002).
 - Answerable only from an alarm table row, with no troubleshooting section: for example `SERVO-7028` DC Bus Overvoltage, `CONV-2011` VFD DC Bus Undervoltage, `CONV-2012` Gearbox Overtemperature.
-- Out of scope: SD-200 firmware updates, braking-resistor sizing, CV-03 belt splicing method, VFD parameter programming, gearbox oil grade, IO-Link parameter writing, sensor pinouts, safety light curtains.
+- Out of scope: SD-200 firmware updates, braking-resistor sizing, CV-03 belt splicing method, VFD parameter programming, gearbox oil grade, IO-Link parameter writing, sensor pinouts, safety light curtains, compressor and dryer maintenance, cylinder seal replacement.
