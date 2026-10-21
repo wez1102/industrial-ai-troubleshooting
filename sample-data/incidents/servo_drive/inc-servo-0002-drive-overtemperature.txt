@@ -1,0 +1,25 @@
+---
+document_id: inc-servo-0002
+title: PL-01 Servo Cabinet Drive Overtemperature
+document_type: incident_report
+equipment_type: servo_drive
+machine_id: PL-01
+alarm_code: SERVO-7024
+occurred_on: 2026-04-09
+version: "1.0.0"
+license: synthetic
+---
+
+PL-01 Servo Cabinet Drive Overtemperature
+
+Symptoms:
+At 14:18 the palletizer stopped halfway through the eighth bundle group. The HMI showed SERVO-7024 Drive Overtemperature. Drive heat-sink temperature reached 81 °C after climbing from 57 °C over 27 min. The alarm point was 78 °C for 3 s. Motor temperature was 51 °C, while cabinet inlet air measured 39 °C. Operators reported that the cabinet felt hotter than usual.
+
+Diagnosis:
+The shift log showed a dust-heavy corrugated run and no PL-01 filter inspection for 43 days. A historian export showed heat-sink temperature rising steadily while axis current stayed near 4.8 A, below the 6.0 A continuous reference. The first fault was the thermal event, not an overload. A logged attempt to reduce the palletizer recipe demand by 10% before the stop had not changed the rising heat-sink trend.
+
+Root Cause:
+The cabinet filter was found around 85% covered in corrugated paper dust, and the restricted intake airflow was the documented cause. No evidence supported a motor winding problem or sustained torque overload. Fan condition was later reported normal during the site's approved isolated inspection.
+
+Resolution:
+SAFETY: Lock out the cabinet, verify zero energy and DC-bus discharge, and secure the fan before removing the filter. Maintenance replaced the clogged filter, inspected the fan, and reviewed the filter-service interval with supervision. A later 35 min observation recorded a cabinet inlet of 28 °C and a drive heat sink of 55 °C, with no new SERVO-7024 entry.
