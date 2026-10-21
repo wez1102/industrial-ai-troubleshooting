@@ -1,0 +1,27 @@
+---
+document_id: inc-pneu-0002
+title: PL-01 CYL4 Slow Layer Clamps From Clogged Silencers
+document_type: incident_report
+equipment_type: pneumatic_cylinder
+machine_id: PL-01
+alarm_code: PNEU-4006
+occurred_on: 2026-05-19
+version: "1.0.0"
+license: synthetic
+---
+
+PL-01 CYL4 Slow Layer Clamps From Clogged Silencers
+
+Symptoms:
+Over two weeks the PL-01 layer clamps got noticeably slower to open, and the palletizer cycle stretched from 14 to 16 s per layer. On 19 May the HMI logged PNEU-4006 Slow Stroke Warning on PL-01 CYL4. The 20-stroke average retract time was 0.71 s against the 0.45 s baseline. Extend time was normal at 0.46 s. Machine pressure was steady at 5.5 bar.
+
+Diagnosis:
+Only the retract stroke was slow, which pointed to the exhaust side of that stroke rather than to the air supply. Earlier in the week a technician had opened both retract flow controls by a full turn to speed the clamps up. It did not help for long: the clamps opened faster for two days but slammed into their end stops, and then slowed down again.
+
+With PL-01 locked out, the shut-off valve closed and locked, and 0 bar confirmed, maintenance removed the exhaust silencers on the CYL4 valve. The silencer on the retract exhaust port was packed solid with grey paper dust; the extend-side silencer was only lightly coated.
+
+Root Cause:
+A clogged exhaust silencer restricted the air leaving the clamp cylinders on the retract stroke, so they opened more slowly as the dust built up. Opening the flow controls had only hidden the restriction for a while.
+
+Resolution:
+SAFETY: PL-01 was locked out, the pneumatic shut-off valve was closed and locked, 0 bar was confirmed, and the clamps were exhausted before the silencers were removed. Both silencers on the CYL4 valve were replaced, and the retract flow controls were turned back to their paint marks. Retract time returned to 0.45 s without slamming. CYL4 silencers were added to the monthly replacement list.

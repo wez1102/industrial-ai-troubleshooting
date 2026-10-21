@@ -1,0 +1,25 @@
+---
+document_id: inc-conv-0002
+title: CV-03 Motor Overtemperature From Blocked Fan Cover
+document_type: incident_report
+equipment_type: conveyor
+machine_id: CV-03
+alarm_code: CONV-2005
+occurred_on: 2026-06-23
+version: "1.0.0"
+license: synthetic
+---
+
+CV-03 Motor Overtemperature From Blocked Fan Cover
+
+Symptoms:
+At 15:05 on a hot afternoon CV-03 stopped and the HMI showed CONV-2005 Motor Overtemperature. Winding temperature had climbed from 92 °C at 13:30 to 143 °C. Operators said the conveyor motor was too hot to touch and smelled hot. Ambient air beside the motor measured 34 °C. The VFD heat sink in the control cabinet read 46 °C, inside its normal range.
+
+Diagnosis:
+Motor current stayed between 4.4 and 4.7 A all afternoon, close to normal for 0.60 m/s, so the motor was not overloaded. The motor was not getting rid of its heat. Earlier, to protect the motor, the crew had lowered the belt speed to 0.45 m/s for 40 minutes. It did not help: winding temperature kept rising, because the shaft-mounted cooling fan turns slower at lower speed while the load stayed the same.
+
+Root Cause:
+After cooling and lockout, the fan cover grille was found about 70% blocked by corrugated dust and a strip of edge trim, and the fins were caked. The trim came from a bent deflector on the nearby trim chute, which was directing trim toward the motor instead of into the chute. The VFD and the drive cabinet were not involved.
+
+Resolution:
+SAFETY: CV-03 was locked out, zero energy was verified, and the motor was left to cool below 50 °C before the fan cover was removed. Maintenance vacuumed the grille, fan blades, and fins, checked that the fan turned freely by hand, and straightened the trim deflector. CV-03 restarted at 0.60 m/s. With ambient at 33 °C, the winding settled at 86 °C after 90 minutes. The fan cover inspection was moved from monthly to weekly.

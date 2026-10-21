@@ -1,0 +1,27 @@
+---
+document_id: inc-safe-0002
+title: CV-03 Pull-Cord Trips From Slack Cord
+document_type: incident_report
+equipment_type: safety_circuit
+machine_id: CV-03
+alarm_code: SAFE-5004
+occurred_on: 2026-01-20
+version: "1.0.0"
+license: synthetic
+---
+
+CV-03 Pull-Cord Trips From Slack Cord
+
+Symptoms:
+On a Tuesday morning CV-03 and CP-01 stopped five times between 06:00 and 08:30 on SAFE-5004 Pull-Cord Stop. Nobody had pulled the cord, and nobody was near the conveyor at the time of any stop. Each time, the reset lever on the pull-cord switch had flipped to the tripped position.
+
+Diagnosis:
+The crew reset the switch after each stop. It did not help: the trips kept coming, and resetting without finding the cause only repeated the stop. The safety controller history showed both channels opening together, so the switch was genuinely operating, not failing.
+
+With CV-03 and CP-01 locked out and zero energy verified, a technician walked the length of CV-03. The tension pointer on the pull-cord switch sat at the slack edge of its green window. At the far end, the eye bolt holding the cord had worked loose by several turns, letting the tension drift to the point where small vibrations tripped the switch.
+
+Root Cause:
+The pull-cord had gone slack because its far-end eye bolt had worked loose. With tension at the edge of the switch's window, conveyor vibration was enough to trip the slack-cord detection.
+
+Resolution:
+SAFETY: CV-03 and CP-01 were locked out and zero energy verified before the cord fixings were adjusted. The eye bolt was tightened and locked, and the cord was re-tensioned until the pointer sat in the centre of the green window. The pull-cord was then function-tested by pulling it at both ends and the middle; each pull stopped CV-03 and CP-01, and neither restarted until the switch was reset and the reset button pressed. The results were recorded in the safety test log. Pull-cord tension was added to the quarterly inspection.
